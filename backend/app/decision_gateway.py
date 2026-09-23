@@ -3,18 +3,19 @@ Decision Gateway (Role 1's core logic) — turns a RiskResult into the
 decision / verification_required / request_status triple defined by the
 frozen API contract.
 
-  LOW    -> decision=ALLOW, verification_required=false, request_status=VERIFIED
-  HIGH   -> decision=PAUSE, verification_required=true,  request_status=STAYS-PAUSED
-  MEDIUM -> see app.config.MEDIUM_RISK_POLICY -- unresolved team decision,
-            isolated to one constant rather than invented here.
+  LOW    -> decision=ALLOW,  verification_required=false, request_status=VERIFIED
+  HIGH   -> decision=PAUSE,  verification_required=true,  request_status=STAYS-PAUSED
+  MEDIUM -> decision=REVIEW, verification_required=false, request_status=PENDING
+            (placeholder -- see the MEDIUM block below)
 
-Core safety invariant preserved: no HIGH-risk or MEDIUM-under-the-current-
-policy request can reach request_status=VERIFIED except through a positive
-Tier verification result or an explicit, logged MANUAL-OVERRIDE.
+Core safety invariant preserved: no HIGH-risk request can reach
+request_status=VERIFIED except through a positive Tier verification result
+or an explicit, logged MANUAL-OVERRIDE. MEDIUM under the policy below never
+reaches VERIFIED either -- it stays PENDING, which is a non-terminal,
+non-unlocking state.
 """
 from dataclasses import dataclass
 
-from app.config import MEDIUM_RISK_POLICY
 from app.enums import RiskLevel, Decision, RequestStatus
 from app.risk_engine import RiskResult
 
@@ -41,15 +42,23 @@ def gate(risk: RiskResult) -> GatewayResult:
             request_status=RequestStatus.STAYS_PAUSED,
         )
 
-    # MEDIUM
-    if MEDIUM_RISK_POLICY == "SAME_AS_HIGH":
-        return GatewayResult(
-            decision=Decision.PAUSE,
-            verification_required=True,
-            request_status=RequestStatus.STAYS_PAUSED,
-        )
-
-    # No other policy is implemented; fail loudly rather than silently
-    # inventing behavior if the constant is ever changed to something
-    # unhandled here.
-    raise NotImplementedError(f"Unhandled MEDIUM_RISK_POLICY: {MEDIUM_RISK_POLICY}")
+    # TODO: pending official sign-off, see API contract review item #1
+    # (risk_level=MEDIUM's decision/verification_required/request_status
+    # were left formally undefined). Placeholder per the task brief:
+    # STAYS-PAUSED is "too strict" (nothing about a MEDIUM signal set
+    # justifies a full action lock) and VERIFIED is "too loose" (that
+    # would silently auto-allow a request the system is only partially
+    # confident about). Landed here instead: decision=REVIEW (advisory,
+    # not a Tier-verification outcome) and request_status=PENDING -- the
+    # one status in the frozen five-value set that is neither a lock
+    # (STAYS-PAUSED) nor an unlock (VERIFIED), so the frontend renders a
+    # distinct "review before you proceed" screen rather than reusing
+    # either the paused or the unlocked treatment. The action is not
+    # forced open and not forced shut; the user decides, and it's logged
+    # either way via MEDIUM_RISK_REVIEW.
+    assert risk.risk_level == RiskLevel.MEDIUM
+    return GatewayResult(
+        decision=Decision.REVIEW,
+        verification_required=False,
+        request_status=RequestStatus.PENDING,
+    )

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardBody } from "../../components/ui/Card";
 import { RequestStatusBadge } from "../../components/ui/Badge";
 import { Spinner, ErrorBanner, SuccessBanner } from "../../components/ui/Feedback";
@@ -9,6 +10,7 @@ import { ProtectedActionCard } from "../../components/ProtectedActionCard";
 import { VerificationProgress } from "../../components/VerificationProgress";
 import { ManualOverrideModal } from "../../components/ManualOverrideModal";
 import { AuditTrail } from "../../components/AuditTrail";
+import { FraudReportCard } from "../../components/FraudReportCard";
 import { useIdentity } from "../../state/identity";
 import { useRequestState } from "../../hooks/useRequestState";
 import { manualOverride } from "../../api/client";
@@ -65,9 +67,28 @@ export function RequestDetail() {
       {state.request_status === "TIMED-OUT" && (
         <ErrorBanner title="Timed out" message="No tier resolved this request in time. The action remains locked." />
       )}
+      {state.request_status === "PENDING" && state.decision === "REVIEW" && (
+        <div className="rounded-lg border border-blue-900/60 bg-blue-950/30 px-4 py-3">
+          <p className="text-sm font-semibold text-blue-300">Medium risk — review before proceeding</p>
+          <p className="mt-0.5 text-sm text-blue-200/90">
+            Some risk signals were detected, but not enough to automatically pause the action. It has not been
+            locked and has not been auto-approved — decide for yourself whether to proceed, and consider verifying
+            independently if anything feels off.
+          </p>
+        </div>
+      )}
 
       <RiskAnalysisCard state={state} />
-      <ProtectedActionCard state={state} />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={state.request_status}
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+        >
+          <ProtectedActionCard state={state} />
+        </motion.div>
+      </AnimatePresence>
 
       {state.verification_required && (
         <VerificationProgress
@@ -95,6 +116,8 @@ export function RequestDetail() {
           </CardBody>
         </Card>
       )}
+
+      {canOverride && <FraudReportCard />}
 
       <AuditTrail token={identity.token} requestId={state.request_id} refreshKey={refreshKey} />
 

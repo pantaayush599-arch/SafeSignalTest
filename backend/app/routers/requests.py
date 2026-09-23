@@ -11,7 +11,7 @@ from app.enums import RequestStatus
 from app.models import Request, TrustedContact, Requester
 from app.schemas import (
     RequestStateOut, ManualOverrideIn, ManualOverrideOut, AuditTrailOut, AuditEventOut,
-    VerificationSummary, ContactInboxItem,
+    VerificationSummary, ContactInboxItem, DashboardOut, DashboardEntry,
 )
 from app.auth import get_current_contact
 from app.ws_manager import manager
@@ -95,6 +95,37 @@ def contact_inbox(contact_id: str, db: Session = Depends(get_db), contact: Trust
             reason_codes=req.reason_codes or [], transcript_or_text=req.transcript_or_text,
         ))
     return out
+
+
+@router.get("/requesters/{requester_id}/dashboard", response_model=DashboardOut)
+def family_dashboard(requester_id: str, db: Session = Depends(get_db), identity=Depends(get_current_identity)):
+    """Simple family dashboard (team scope discussion, item C): a read view
+    over requests + their outcomes for one requester, visible to the
+    requester themselves or any of their registered trusted contacts
+    ("family"). No new state-machine logic -- just an aggregating query
+    over the existing Request rows."""
+    kind, obj = identity
+    if kind == "requester":
+        if obj.requester_id != requester_id:
+            raise HTTPException(status_code=403, detail={"error": {"code": "FORBIDDEN", "message": "Cannot view another requester's dashboard."}})
+        requester = obj
+    else:  # trusted contact -- must belong to this requester's family
+        if obj.requester_id != requester_id:
+            raise HTTPException(status_code=403, detail={"error": {"code": "FORBIDDEN", "message": "You are not a registered contact for this requester."}})
+        requester = db.query(Requester).filter(Requester.requester_id == requester_id).first()
+        if not requester:
+            raise HTTPException(status_code=404, detail={"error": {"code": "REQUEST_NOT_FOUND", "message": "No such requester."}})
+
+    rows = db.query(Request).filter(Request.requester_id == requester_id).order_by(Request.created_at.desc()).limit(50).all()
+    entries = [
+        DashboardEntry(
+            request_id=r.request_id, risk_level=r.risk_level, risk_score=r.risk_score,
+            request_status=r.request_status, claimed_identity=r.claimed_identity, amount=r.amount,
+            triggered_by_panic=r.triggered_by_panic, created_at=r.created_at,
+        )
+        for r in rows
+    ]
+    return DashboardOut(requester_id=requester.requester_id, requester_name=requester.name, entries=entries)
 
 
 @router.post("/requests/{request_id}/manual-override", response_model=ManualOverrideOut)

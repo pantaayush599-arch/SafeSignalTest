@@ -4,11 +4,12 @@ import logging
 from fastapi import FastAPI, Request as FastAPIRequest
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from sqlalchemy.exc import IntegrityError
 
 from app.config import CORS_ORIGINS
 from app import database
 from app.database import Base
-from app.routers import analyze, verify, requests as requests_router, contacts, health, demo
+from app.routers import analyze, verify, requests as requests_router, contacts, health, demo, auth, panic
 from app.seed import seed_demo_data
 from app.verification_service import sweep_timeouts
 
@@ -30,6 +31,8 @@ app.include_router(verify.router)
 app.include_router(requests_router.router)
 app.include_router(contacts.router)
 app.include_router(demo.router)
+app.include_router(auth.router)
+app.include_router(panic.router)
 
 _sweeper_task: asyncio.Task | None = None
 
@@ -67,6 +70,19 @@ async def on_startup():
 async def on_shutdown():
     if _sweeper_task:
         _sweeper_task.cancel()
+
+
+@app.exception_handler(IntegrityError)
+async def integrity_error_handler(request: FastAPIRequest, exc: IntegrityError):
+    # Defense in depth for the acceptance checklist's FK requirement: any
+    # write that violates a foreign key or uniqueness constraint (e.g. a
+    # requester_id that doesn't resolve to a real users row) comes back as
+    # a clean 409, never a raw 500.
+    logger.warning("IntegrityError: %s", exc)
+    return JSONResponse(status_code=409, content={"error": {
+        "code": "INTEGRITY_ERROR",
+        "message": "This request conflicts with an existing record or references a user that doesn't exist.",
+    }})
 
 
 @app.exception_handler(Exception)

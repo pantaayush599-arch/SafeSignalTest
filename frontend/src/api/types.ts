@@ -2,7 +2,8 @@
 // here without renaming them in the backend contract too.
 
 export type RiskLevel = "LOW" | "MEDIUM" | "HIGH";
-export type Decision = "ALLOW" | "PAUSE" | "BLOCK";
+export type Decision = "ALLOW" | "PAUSE" | "BLOCK" | "REVIEW";
+export type AuthProvider = "PHONE" | "GOOGLE";
 export type RequestStatus =
   | "PENDING"
   | "VERIFIED"
@@ -122,6 +123,34 @@ export interface DemoIdentity {
   id: string;
   name: string;
   token: string;
+  requester_id?: string | null; // set for role="contact": which requester's family they belong to
+}
+
+export interface LoginOut {
+  requester_id: string;
+  name: string;
+  auth_provider?: AuthProvider | null;
+  phone_number?: string | null;
+  email?: string | null;
+  session_token: string;
+  created: boolean;
+}
+
+export interface DashboardEntry {
+  request_id: string;
+  risk_level?: RiskLevel | null;
+  risk_score?: number | null;
+  request_status: RequestStatus;
+  claimed_identity?: string | null;
+  amount?: number | null;
+  triggered_by_panic: boolean;
+  created_at: string;
+}
+
+export interface DashboardOut {
+  requester_id: string;
+  requester_name: string;
+  entries: DashboardEntry[];
 }
 
 export interface ApiErrorBody {

@@ -33,24 +33,12 @@ RISK_LOW_MAX = 39
 RISK_MEDIUM_MAX = 59  # HIGH starts at 60, per the architecture doc.
 
 # --- MEDIUM-risk policy -----------------------------------------------
-# UNRESOLVED IN SOURCE DOCUMENTS. The API Contract Review flags this as the
-# one genuine team decision still open ("[Decision] MEDIUM risk behavior is
-# undefined... Role 1 can't route without it"). This file isolates that gap
-# to a single named constant so it is trivial to find and change once the
-# team decides, rather than letting an invented policy leak silently into
-# scoring/UI/tests as if it were specified.
-#
-# Placeholder default chosen for this build (NOT specified by any source
-# document): treat MEDIUM the same as HIGH for the purposes of the decision
-# gateway (decision=PAUSE, verification_required=true, request_status=
-# STAYS-PAUSED, Tier 1 begins) on the reasoning that the core safety
-# invariant ("no HIGH-risk or paused request may automatically reach ALLOW
-# without a positive Tier verification result or an explicit, logged
-# MANUAL-OVERRIDE") is never violated by erring toward more verification.
-# A future team decision may instead want a lighter-weight MEDIUM path
-# (e.g. Tier 1 only, shorter timers, or a distinct ALLOW-with-warning path)
-# -- that decision only needs to change this constant and decision_gateway.py.
-MEDIUM_RISK_POLICY = "SAME_AS_HIGH"  # options documented above; team-decided value goes here
+# See decision_gateway.py's TODO -- the API Contract Review flags MEDIUM as
+# the one still-open team decision. That module now implements a concrete
+# placeholder (decision=REVIEW, request_status=PENDING) per this task's
+# explicit brief, isolated there rather than as a config constant since
+# there's a single call site and the reasoning needs the full RiskResult
+# context.
 
 # --- Audio constraints (STT architecture doc, "Resolved" items) ---
 AUDIO_MAX_RAW_BYTES = 5 * 1024 * 1024  # 5 MB raw/decoded, not wire size

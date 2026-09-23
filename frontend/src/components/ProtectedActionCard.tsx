@@ -6,6 +6,11 @@ export function ProtectedActionCard({ state }: { state: RequestStateOut }) {
   const locked = state.request_status === "STAYS-PAUSED" || state.request_status === "TIMED-OUT";
   const unlocked = state.request_status === "VERIFIED";
   const overridden = state.request_status === "MANUAL-OVERRIDE";
+  // MEDIUM risk (decision=REVIEW): neither locked nor unlocked. request_status
+  // stays PENDING -- see backend/app/decision_gateway.py's TODO. Rendered
+  // as a distinct third visual treatment so it can never be mistaken for
+  // either "locked" or "unlocked".
+  const advisory = state.request_status === "PENDING" && state.decision === "REVIEW";
 
   let statusText: string;
   let statusClass: string;
@@ -22,10 +27,18 @@ export function ProtectedActionCard({ state }: { state: RequestStateOut }) {
     statusText = "Timed out — remains locked";
     statusClass = "text-[var(--color-status-timedout)]";
     ring = "border-slate-700";
-  } else {
+  } else if (advisory) {
+    statusText = "Not locked — review before proceeding";
+    statusClass = "text-[var(--color-primary)]";
+    ring = "border-blue-800/60";
+  } else if (locked) {
     statusText = "Locked — high-risk request detected";
     statusClass = "text-[var(--color-status-paused)]";
     ring = "border-amber-800/60";
+  } else {
+    statusText = "Awaiting analysis";
+    statusClass = "text-[var(--color-text-muted)]";
+    ring = "border-[var(--color-border)]";
   }
 
   return (
@@ -53,6 +66,12 @@ export function ProtectedActionCard({ state }: { state: RequestStateOut }) {
               <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" aria-hidden="true">
                 <rect x="5" y="11" width="14" height="9" rx="2" strokeWidth="2" />
                 <path d="M8 11V8a4 4 0 0 1 7.4-2.1" strokeWidth="2" strokeLinecap="round" />
+              </svg>
+            )}
+            {advisory && (
+              <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" strokeWidth="2" />
+                <path d="M12 8v5m0 3h.01" strokeWidth="2" strokeLinecap="round" />
               </svg>
             )}
             {statusText}

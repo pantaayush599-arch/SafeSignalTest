@@ -106,11 +106,12 @@ async def analyze_request(
 
     event = {
         RiskLevel.LOW: "LOW_RISK_ALLOWED",
-        RiskLevel.MEDIUM: "MEDIUM_RISK_DETECTED",
+        RiskLevel.MEDIUM: "MEDIUM_RISK_REVIEW",
         RiskLevel.HIGH: "HIGH_RISK_DETECTED",
     }[risk.risk_level]
     audit_log(db, req.request_id, event, {"risk_score": risk.risk_score, "reason_codes": risk.reason_codes})
-    audit_log(db, req.request_id, "ACTION_ALLOWED" if result.decision.value == "ALLOW" else "ACTION_PAUSED", {})
+    action_event = {"ALLOW": "ACTION_ALLOWED", "PAUSE": "ACTION_PAUSED", "REVIEW": "ACTION_ADVISORY_REVIEW"}[result.decision.value]
+    audit_log(db, req.request_id, action_event, {})
     db.commit()
 
     # --- Auto-orchestrate Tier 1 when verification is required --------

@@ -25,5 +25,6 @@ def demo_identities(db: Session = Depends(get_db)):
     for r in db.query(Requester).all():
         out.append(DemoLoginOut(role="requester", id=r.requester_id, name=r.name, token=r.auth_token))
     for c in db.query(TrustedContact).all():
-        out.append(DemoLoginOut(role="contact", id=c.contact_id, name=c.contact_name, token=c.auth_token))
+        out.append(DemoLoginOut(role="contact", id=c.contact_id, name=c.contact_name, token=c.auth_token,
+                                 requester_id=c.requester_id))
     return out

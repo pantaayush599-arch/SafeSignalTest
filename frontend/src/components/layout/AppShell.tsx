@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useIdentity } from "../../state/identity";
+import { PanicButton } from "../PanicButton";
 
 const SHIELD_ICON = (
   <svg viewBox="0 0 32 32" fill="none" className="h-6 w-6 shrink-0" aria-hidden="true">
@@ -17,9 +18,13 @@ function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   if (identity?.role === "requester") {
     links.push({ to: "/requester", label: "New request" });
     links.push({ to: "/requester/history", label: "My requests" });
+    links.push({ to: `/dashboard/${identity.id}`, label: "Family dashboard" });
   }
   if (identity?.role === "contact") {
     links.push({ to: "/contact", label: "Verification inbox" });
+    if (identity.requester_id) {
+      links.push({ to: `/dashboard/${identity.requester_id}`, label: "Family dashboard" });
+    }
   }
   links.push({ to: "/", label: "Switch persona" });
 
@@ -129,6 +134,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           </p>
         </div>
       </footer>
+
+      <PanicButton />
     </div>
   );
 }

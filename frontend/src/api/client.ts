@@ -6,7 +6,9 @@ import type {
   AnalyzeRequestOut,
   AuditTrailOut,
   ContactInboxItem,
+  DashboardOut,
   DemoIdentity,
+  LoginOut,
   ManualOverrideOut,
   RequestStateOut,
   Tier3StartOut,
@@ -117,3 +119,15 @@ export const submitTier3 = (token: string, verificationId: string, code: string)
 // -------------------------------------------------------------- contacts
 export const getContactInbox = (token: string, contactId: string) =>
   request<ContactInboxItem[]>(`/contacts/${contactId}/inbox`, { token });
+
+// -------------------------------------------------------------- auth
+export const loginWithFirebaseToken = (idToken: string) =>
+  request<LoginOut>("/auth/login", { method: "POST", body: JSON.stringify({ id_token: idToken }) });
+
+// -------------------------------------------------------------- panic button
+export const triggerPanic = (token: string, note?: string) =>
+  request<AnalyzeRequestOut>("/panic", { method: "POST", token, body: JSON.stringify({ note }) });
+
+// -------------------------------------------------------------- family dashboard
+export const getDashboard = (token: string, requesterId: string) =>
+  request<DashboardOut>(`/requesters/${requesterId}/dashboard`, { token });

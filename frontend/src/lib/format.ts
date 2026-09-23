@@ -6,6 +6,7 @@ const REASON_LABELS: Record<string, string> = {
   urgency_keyword: "Urgent language",
   unusual_amount_flag: "Unusual amount",
   deepfake_signal_advisory: "Deepfake signal (advisory)",
+  manual_panic_trigger: "Manually triggered (panic button)",
 };
 
 export function reasonLabel(code: string): string {

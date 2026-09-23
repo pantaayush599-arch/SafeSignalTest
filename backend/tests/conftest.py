@@ -1,6 +1,11 @@
 import os
 import tempfile
 
+# Must be set before app.firebase_auth is imported (it reads this env var
+# once at module import time), so tests can exercise POST /auth/login via
+# the clearly-labeled dev-mode token path without real Firebase credentials.
+os.environ.setdefault("SAFESIGNAL_AUTH_DEV_MODE", "true")
+
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine

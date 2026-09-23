@@ -7,9 +7,10 @@ import type { DemoIdentity } from "../api/types";
 import { describeError } from "../lib/errors";
 import { useIdentity } from "../state/identity";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
+import { FirebaseLoginPanel } from "../components/FirebaseLoginPanel";
 
 export function RolePicker() {
-  useDocumentTitle("Choose a persona");
+  useDocumentTitle("Sign in");
   const [identities, setIdentities] = useState<DemoIdentity[] | null>(null);
   const [error, setError] = useState<{ title: string; message: string } | null>(null);
   const { setIdentity } = useIdentity();
@@ -37,6 +38,16 @@ export function RolePicker() {
           SafeSignal pauses high-risk, deepfake-style requests and requires independent verification before any
           consequential action goes through. Pick a persona below to try the demo from either side.
         </p>
+      </div>
+
+      <div className="mx-auto w-full max-w-md">
+        <FirebaseLoginPanel />
+      </div>
+
+      <div className="mx-auto flex w-full max-w-3xl items-center gap-3 text-xs text-[var(--color-text-faint)]">
+        <div className="h-px flex-1 bg-[var(--color-border)]" />
+        demo personas (skip sign-in)
+        <div className="h-px flex-1 bg-[var(--color-border)]" />
       </div>
 
       {error && <ErrorBanner title={error.title} message={error.message} />}

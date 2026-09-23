@@ -5,7 +5,7 @@ from pydantic import BaseModel, Field, model_validator
 
 from app.enums import (
     InputType, Channel, ActionType, ContactType, RiskLevel, Decision,
-    RequestStatus, VerificationStatus,
+    RequestStatus, VerificationStatus, AuthProvider,
 )
 
 
@@ -237,3 +237,43 @@ class DemoLoginOut(BaseModel):
     id: str
     name: str
     token: str
+    requester_id: Optional[str] = None  # set for role="contact"; which requester's family they belong to
+
+
+# ---------------------------------------------------------------- firebase auth
+class LoginIn(BaseModel):
+    id_token: str = Field(min_length=1)
+
+
+class LoginOut(BaseModel):
+    requester_id: str
+    name: str
+    auth_provider: Optional[AuthProvider] = None
+    phone_number: Optional[str] = None
+    email: Optional[str] = None
+    session_token: str
+    created: bool  # true on first login, false if the user already existed
+
+
+# ---------------------------------------------------------------- panic button
+class PanicIn(BaseModel):
+    request_id: Optional[str] = None
+    note: Optional[str] = None
+
+
+# ---------------------------------------------------------------- family dashboard
+class DashboardEntry(BaseModel):
+    request_id: str
+    risk_level: Optional[RiskLevel] = None
+    risk_score: Optional[int] = None
+    request_status: RequestStatus
+    claimed_identity: Optional[str] = None
+    amount: Optional[float] = None
+    triggered_by_panic: bool = False
+    created_at: datetime
+
+
+class DashboardOut(BaseModel):
+    requester_id: str
+    requester_name: str
+    entries: List[DashboardEntry]

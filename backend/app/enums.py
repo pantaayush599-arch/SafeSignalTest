@@ -37,6 +37,11 @@ class ContactType(str, Enum):
     SECONDARY = "SECONDARY"
 
 
+class AuthProvider(str, Enum):
+    PHONE = "PHONE"
+    GOOGLE = "GOOGLE"
+
+
 class RiskLevel(str, Enum):
     LOW = "LOW"
     MEDIUM = "MEDIUM"
@@ -47,6 +52,10 @@ class Decision(str, Enum):
     ALLOW = "ALLOW"
     PAUSE = "PAUSE"
     BLOCK = "BLOCK"
+    # Added for the MEDIUM-risk placeholder (task Part 5): advisory only,
+    # never pauses the action and never auto-unlocks it. See
+    # decision_gateway.py's TODO for the pending official sign-off.
+    REVIEW = "REVIEW"
 
 
 class RequestStatus(str, Enum):
@@ -84,12 +93,14 @@ class ErrorCode(str, Enum):
     FORBIDDEN = "FORBIDDEN"
     INVALID_INPUT = "INVALID_INPUT"
     WRONG_TIER_STATE = "WRONG_TIER_STATE"
+    INVALID_FIREBASE_TOKEN = "INVALID_FIREBASE_TOKEN"
+    INTEGRITY_ERROR = "INTEGRITY_ERROR"
 
 
 AUDIT_EVENTS = [
     "REQUEST_RECEIVED",
     "LOW_RISK_ALLOWED",
-    "MEDIUM_RISK_DETECTED",
+    "MEDIUM_RISK_REVIEW",
     "HIGH_RISK_DETECTED",
     "AUDIO_UNPROCESSABLE",
     "STT_FAILED",
@@ -108,7 +119,9 @@ AUDIT_EVENTS = [
     "TIER3_ATTEMPTS_EXHAUSTED",
     "ACTION_ALLOWED",
     "ACTION_PAUSED",
+    "ACTION_ADVISORY_REVIEW",
     "ACTION_UNLOCKED",
     "MANUAL_OVERRIDE",
     "REQUEST_TIMED_OUT",
+    "PANIC_TRIGGERED",
 ]

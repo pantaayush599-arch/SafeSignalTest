@@ -21,12 +21,23 @@ def gen_token():
 
 
 class Requester(Base):
+    """The app's `users` table. Row identity is the Firebase UID once a user
+    has logged in via POST /auth/login (see app/firebase_auth.py) -- this is
+    the "real row in the users table" the task's Part 1 FK requirement
+    refers to. `auth_token` remains the app-level session token returned to
+    the frontend after Firebase verification, reusing the bearer-token
+    scheme already in place rather than introducing a second token type."""
     __tablename__ = "requesters"
 
     requester_id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
     auth_token = Column(String, unique=True, nullable=False, default=gen_token)
     created_at = Column(DateTime, default=now_utc)
+
+    # --- Firebase identity (Part 1) ---
+    auth_provider = Column(String, nullable=True)  # PHONE | GOOGLE
+    phone_number = Column(String, nullable=True)
+    email = Column(String, nullable=True)
 
     contacts = relationship("TrustedContact", back_populates="requester")
     requests = relationship("Request", back_populates="requester")
@@ -64,6 +75,7 @@ class Request(Base):
     risk_level = Column(String, nullable=True)
     decision = Column(String, nullable=True)
     reason_codes = Column(JSON, nullable=True, default=list)
+    triggered_by_panic = Column(Boolean, nullable=False, default=False)
     verification_required = Column(Boolean, nullable=False, default=False)
     request_status = Column(String, nullable=False, default="PENDING")
     current_tier = Column(Integer, nullable=True)
