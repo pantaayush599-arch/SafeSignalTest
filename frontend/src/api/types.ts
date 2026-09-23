@@ -124,6 +124,17 @@ export interface DemoIdentity {
   name: string;
   token: string;
   requester_id?: string | null; // set for role="contact": which requester's family they belong to
+  relationship?: string | null; // set for role="contact"
+}
+
+export interface ContactOut {
+  contact_id: string;
+  requester_id: string;
+  contact_name: string;
+  relationship?: string | null;
+  phone_number: string;
+  contact_type: ContactType;
+  auth_token?: string | null;
 }
 
 export interface LoginOut {

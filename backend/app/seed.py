@@ -24,7 +24,8 @@ def seed_demo_data(db: Session):
     primary = TrustedContact(
         contact_id="contact_101",
         requester_id="user_102",
-        contact_name="Priya Sharma (Mom)",
+        contact_name="Priya Sharma",
+        relationship_label="Mother",
         phone_number="+919876500101",
         contact_type="PRIMARY",
         auth_token="demo-contact-token-contact101",
@@ -32,7 +33,8 @@ def seed_demo_data(db: Session):
     secondary = TrustedContact(
         contact_id="contact_202",
         requester_id="user_102",
-        contact_name="Rohan Sharma (Uncle)",
+        contact_name="Rohan Sharma",
+        relationship_label="Uncle",
         phone_number="+919876500202",
         contact_type="SECONDARY",
         auth_token="demo-contact-token-contact202",

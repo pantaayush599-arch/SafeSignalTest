@@ -49,6 +49,9 @@ class TrustedContact(Base):
     contact_id = Column(String, primary_key=True)
     requester_id = Column(String, ForeignKey("requesters.requester_id"), nullable=False)
     contact_name = Column(String, nullable=False)
+    # Named relationship_label, not `relationship`, since the latter would
+    # shadow the sqlalchemy.orm.relationship() import used a few lines below.
+    relationship_label = Column(String, nullable=True)  # e.g. "Son", "Mother", "Other trusted person"
     phone_number = Column(String, nullable=False)
     contact_type = Column(String, nullable=False)  # PRIMARY | SECONDARY
     push_token = Column(String, nullable=False, default=gen_token)  # server-side only, never sent by caller

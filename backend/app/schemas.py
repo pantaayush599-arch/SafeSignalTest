@@ -199,6 +199,7 @@ class AuditTrailOut(BaseModel):
 class ContactIn(BaseModel):
     requester_id: str
     contact_name: str
+    relationship: Optional[str] = None
     phone_number: str
     contact_type: ContactType
 
@@ -207,6 +208,7 @@ class ContactOut(BaseModel):
     contact_id: str
     requester_id: str
     contact_name: str
+    relationship: Optional[str] = None
     phone_number: str
     contact_type: ContactType
     auth_token: Optional[str] = None  # only returned at creation, for demo login
@@ -238,6 +240,7 @@ class DemoLoginOut(BaseModel):
     name: str
     token: str
     requester_id: Optional[str] = None  # set for role="contact"; which requester's family they belong to
+    relationship: Optional[str] = None  # set for role="contact"
 
 
 # ---------------------------------------------------------------- firebase auth

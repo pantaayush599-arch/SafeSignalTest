@@ -25,12 +25,14 @@ TIER1_EXPIRY_SECONDS = 120
 TIER2_EXPIRY_SECONDS = 120
 
 # --- Risk score bands ---
-# The STT/Architecture doc states explicitly: "The architecture specifies
-# 60-100 as HIGH". LOW/MEDIUM boundary is not itself frozen anywhere in the
-# source documents; 40 is used as the LOW/MEDIUM split so MEDIUM occupies a
-# distinct middle band (40-59) rather than being folded into LOW or HIGH.
-RISK_LOW_MAX = 39
-RISK_MEDIUM_MAX = 59  # HIGH starts at 60, per the architecture doc.
+# 0-29 LOW / 30-59 MEDIUM / 60-100 HIGH, per the frontend design brief's
+# explicit "Current project classification... Do not silently change these
+# thresholds." An earlier build session had used 0-39 LOW/40-59 MEDIUM here
+# since no source document fixed the LOW/MEDIUM boundary at the time; this
+# updates it to match what's now been stated as canonical across two later
+# briefs, rather than leaving frontend and backend disagreeing.
+RISK_LOW_MAX = 29
+RISK_MEDIUM_MAX = 59  # HIGH starts at 60, consistent throughout every source doc.
 
 # --- MEDIUM-risk policy -----------------------------------------------
 # See decision_gateway.py's TODO -- the API Contract Review flags MEDIUM as

@@ -1,6 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
-type Variant = "primary" | "secondary" | "danger" | "ghost" | "confirm" | "reject";
+type Variant = "primary" | "secondary" | "danger" | "ghost" | "confirm" | "reject" | "cyan";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
@@ -10,13 +10,14 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<Variant, string> = {
-  primary: "bg-[var(--color-primary)] hover:bg-[var(--color-primary-strong)] text-white shadow-sm shadow-blue-900/30",
+  primary: "bg-[var(--color-gold)] hover:bg-[var(--color-gold-strong)] text-[#1a1204] font-bold shadow-sm",
+  cyan: "bg-[var(--color-cyan)] hover:bg-[var(--color-cyan-strong)] text-[#04201e] font-bold shadow-sm",
   secondary:
     "bg-[var(--color-surface-raised)] hover:bg-[var(--color-border-strong)] text-[var(--color-text)] border border-[var(--color-border-strong)]",
-  danger: "bg-red-600 hover:bg-red-700 text-white",
-  ghost: "bg-transparent hover:bg-white/5 text-[var(--color-text-muted)]",
-  confirm: "bg-emerald-600 hover:bg-emerald-700 text-white",
-  reject: "bg-transparent hover:bg-red-950/40 text-red-400 border border-red-900/60",
+  danger: "bg-[var(--color-danger)] hover:brightness-110 text-white",
+  ghost: "bg-transparent hover:bg-[var(--color-surface-raised)] text-[var(--color-text-muted)]",
+  confirm: "bg-[var(--color-success)] hover:brightness-110 text-[#04210f] font-bold",
+  reject: "bg-transparent hover:bg-[var(--color-danger-bg)] text-[var(--color-danger)] border border-[var(--color-danger)]/40",
 };
 
 export function Button({

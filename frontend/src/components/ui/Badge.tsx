@@ -32,7 +32,7 @@ export function RiskBadge({ level }: { level: RiskLevel | null | undefined }) {
 
 export function RequestStatusBadge({ status }: { status: RequestStatus }) {
   const map: Record<RequestStatus, { label: string; dot: string }> = {
-    PENDING: { label: "Pending", dot: "bg-[var(--color-status-pending)]" },
+    PENDING: { label: "Pending", dot: "bg-[var(--color-cyan)]" },
     VERIFIED: { label: "Verified · unlocked", dot: "bg-[var(--color-status-verified)]" },
     "STAYS-PAUSED": { label: "Action paused", dot: "bg-[var(--color-status-paused)] animate-pulse" },
     "TIMED-OUT": { label: "Timed out · still paused", dot: "bg-[var(--color-status-timedout)]" },
@@ -44,7 +44,7 @@ export function RequestStatusBadge({ status }: { status: RequestStatus }) {
 
 export function VerificationStatusBadge({ status }: { status: VerificationStatus }) {
   const map: Record<VerificationStatus, { label: string; dot: string }> = {
-    PENDING: { label: "Waiting for response", dot: "bg-[var(--color-status-pending)] animate-pulse" },
+    PENDING: { label: "Waiting for response", dot: "bg-[var(--color-cyan)] animate-pulse" },
     CONFIRMED: { label: "Confirmed", dot: "bg-[var(--color-status-verified)]" },
     REJECTED: { label: "Rejected", dot: "bg-[var(--color-risk-high)]" },
     TIMED_OUT: { label: "Timed out", dot: "bg-[var(--color-status-timedout)]" },

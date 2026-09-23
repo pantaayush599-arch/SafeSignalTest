@@ -1,15 +1,14 @@
 import type { ReactNode } from "react";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export function ErrorBanner({ title, message, action }: { title?: string; message: string; action?: ReactNode }) {
   return (
-    <div role="alert" className="rounded-lg border border-red-900/60 bg-red-950/40 px-4 py-3">
+    <div role="alert" className="rounded-lg border border-[var(--color-danger)]/35 bg-[var(--color-danger-bg)] px-4 py-3">
       <div className="flex items-start gap-2.5">
-        <span className="mt-0.5 text-red-400" aria-hidden="true">
-          ⚠
-        </span>
+        <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-danger)]" aria-hidden="true" />
         <div className="min-w-0">
-          {title && <p className="text-sm font-semibold text-red-300">{title}</p>}
-          <p className="mt-0.5 text-sm text-red-200/90">{message}</p>
+          {title && <p className="text-sm font-semibold text-[var(--color-danger)]">{title}</p>}
+          <p className="mt-0.5 text-sm text-[var(--color-text)]/90">{message}</p>
           {action && <div className="mt-2">{action}</div>}
         </div>
       </div>
@@ -19,14 +18,12 @@ export function ErrorBanner({ title, message, action }: { title?: string; messag
 
 export function SuccessBanner({ title, message }: { title?: string; message: string }) {
   return (
-    <div role="status" className="rounded-lg border border-emerald-900/60 bg-emerald-950/40 px-4 py-3">
+    <div role="status" className="rounded-lg border border-[var(--color-success)]/35 bg-[var(--color-success-bg)] px-4 py-3">
       <div className="flex items-start gap-2.5">
-        <span className="mt-0.5 text-emerald-400" aria-hidden="true">
-          ✓
-        </span>
+        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--color-success)]" aria-hidden="true" />
         <div className="min-w-0">
-          {title && <p className="text-sm font-semibold text-emerald-300">{title}</p>}
-          <p className="mt-0.5 text-sm text-emerald-200/90">{message}</p>
+          {title && <p className="text-sm font-semibold text-[var(--color-success)]">{title}</p>}
+          <p className="mt-0.5 text-sm text-[var(--color-text)]/90">{message}</p>
         </div>
       </div>
     </div>

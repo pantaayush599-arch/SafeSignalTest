@@ -27,7 +27,7 @@ export function FirebaseLoginPanel() {
   async function completeLogin(idToken: string) {
     const result = await loginWithFirebaseToken(idToken);
     setIdentity({ role: "requester", id: result.requester_id, name: result.name, token: result.session_token });
-    navigate("/requester");
+    navigate("/home");
   }
 
   async function handleSendCode(e: React.FormEvent) {
@@ -107,7 +107,7 @@ export function FirebaseLoginPanel() {
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="+91 98765 43210"
-              className="rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-brand)]"
+              className="rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-gold)]"
             />
             <Button type="submit" loading={busy === "phone"} fullWidth>
               Send code
@@ -127,7 +127,7 @@ export function FirebaseLoginPanel() {
               value={code}
               onChange={(e) => setCode(e.target.value)}
               placeholder="123456"
-              className="rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 font-mono text-lg tracking-[0.3em] outline-none focus:border-[var(--color-brand)]"
+              className="rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 font-mono text-lg tracking-[0.3em] outline-none focus:border-[var(--color-gold)]"
             />
             <Button type="submit" loading={busy === "code"} fullWidth>
               Verify &amp; sign in

@@ -3,31 +3,88 @@
 @theme {
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
 
-  --color-bg: #0a0f1a;
-  --color-surface: #111827;
-  --color-surface-raised: #161f33;
-  --color-border: #253044;
-  --color-border-strong: #35415a;
+/*
+  Design system: "dark techno-aesthetic + premium family safety".
+  Deep navy/charcoal + electric cyan (technology/security accent) + warm
+  gold (trust/premium/important actions) + warm white + controlled red
+  (true high-risk only) + soft green (verified/safe only). Light and dark
+  are each individually tuned, not a simple inversion.
+*/
+:root,
+:root[data-theme="dark"] {
+  --color-bg: #0a0e1a;
+  --color-bg-elevated: #0d1220;
+  --color-surface: #111729;
+  --color-surface-raised: #161e35;
+  --color-border: #232c46;
+  --color-border-strong: #34405f;
 
-  --color-text: #e6ebf3;
-  --color-text-muted: #93a1b8;
-  --color-text-faint: #5d6b84;
+  --color-text: #f3efe6;
+  --color-text-muted: #9aa3bd;
+  --color-text-faint: #626d8c;
 
-  --color-brand: #22d3b8;
-  --color-brand-strong: #0fb89e;
-  --color-primary: #3b82f6;
-  --color-primary-strong: #2563eb;
+  --color-gold: #dcaa54;
+  --color-gold-strong: #c69339;
+  --color-cyan: #35d6cf;
+  --color-cyan-strong: #1fb3ac;
 
-  --color-risk-low: #22c55e;
-  --color-risk-medium: #f59e0b;
-  --color-risk-high: #ef4444;
+  --color-risk-low: #55c98a;
+  --color-risk-medium: #dcaa54;
+  --color-risk-high: #e0574a;
 
-  --color-status-verified: #22c55e;
-  --color-status-paused: #f59e0b;
-  --color-status-timedout: #64748b;
-  --color-status-override: #a855f7;
-  --color-status-pending: #3b82f6;
+  --color-status-verified: #55c98a;
+  --color-status-paused: #dcaa54;
+  --color-status-timedout: #74809e;
+  --color-status-override: #dcaa54;
+  --color-status-review: #35d6cf;
+  --color-status-rejected: #e0574a;
+
+  --color-danger: #e0574a;
+  --color-danger-bg: #2a1414;
+  --color-success: #55c98a;
+  --color-success-bg: #0f231a;
+  --color-info-bg: #0c2321;
+
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --color-bg: #faf6ec;
+  --color-bg-elevated: #f6f0e0;
+  --color-surface: #ffffff;
+  --color-surface-raised: #fbf5e7;
+  --color-border: #e7dcc2;
+  --color-border-strong: #d6c7a1;
+
+  --color-text: #171d34;
+  --color-text-muted: #5b6480;
+  --color-text-faint: #8991ab;
+
+  --color-gold: #a97527;
+  --color-gold-strong: #8c611f;
+  --color-cyan: #0f8f88;
+  --color-cyan-strong: #0b716c;
+
+  --color-risk-low: #2f9e63;
+  --color-risk-medium: #a97527;
+  --color-risk-high: #c1392c;
+
+  --color-status-verified: #2f9e63;
+  --color-status-paused: #a97527;
+  --color-status-timedout: #6b7490;
+  --color-status-override: #a97527;
+  --color-status-review: #0f8f88;
+  --color-status-rejected: #c1392c;
+
+  --color-danger: #c1392c;
+  --color-danger-bg: #fdeeec;
+  --color-success: #2f9e63;
+  --color-success-bg: #eaf7ef;
+  --color-info-bg: #e9f7f6;
+
+  color-scheme: light;
 }
 
 html {
@@ -41,11 +98,13 @@ body {
   font-family: var(--font-sans);
   overflow-x: hidden;
   min-width: 320px;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 #root {
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
 }
 
 * {
@@ -53,7 +112,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-brand);
+  outline: 2px solid var(--color-cyan);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -64,4 +123,51 @@ a {
 
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+@keyframes ss-ring-pulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.ss-pulse-ring {
+  animation: ss-ring-pulse 2.6s cubic-bezier(0.2, 0.6, 0.4, 1) infinite;
+}
+
+@keyframes ss-signal-travel {
+  0% {
+    left: 6%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: 94%;
+    opacity: 0;
+  }
+}
+
+.ss-signal-dot {
+  animation: ss-signal-travel 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

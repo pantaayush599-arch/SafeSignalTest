@@ -1,5 +1,7 @@
 import { Card, CardHeader, CardBody } from "./ui/Card";
 import { RiskBadge } from "./ui/Badge";
+import { RiskScale } from "./RiskScale";
+import { TranscriptViewer } from "./TranscriptViewer";
 import type { RequestStateOut } from "../api/types";
 import { reasonLabel } from "../lib/format";
 
@@ -7,17 +9,14 @@ export function RiskAnalysisCard({ state }: { state: RequestStateOut }) {
   return (
     <Card>
       <CardHeader
-        title="Risk analysis"
+        title="Why this was flagged"
         subtitle="Rule-based signal detection. A deepfake/authenticity score, if present, is advisory only."
         right={<RiskBadge level={state.risk_level} />}
       />
       <CardBody>
-        <div className="mb-4 flex items-end gap-2">
-          <span className="font-mono text-4xl font-extrabold tabular">{state.risk_score ?? 0}</span>
-          <span className="mb-1 text-sm text-[var(--color-text-muted)]">/ 100 risk score</span>
-        </div>
+        <RiskScale score={state.risk_score ?? 0} level={state.risk_level} />
 
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+        <p className="mb-2 mt-5 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
           Detected signals
         </p>
         {state.reason_codes.length === 0 ? (
@@ -36,9 +35,8 @@ export function RiskAnalysisCard({ state }: { state: RequestStateOut }) {
         )}
 
         {state.transcript_or_text && (
-          <div className="mt-4 rounded-lg bg-[var(--color-surface-raised)] p-3">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">Transcript</p>
-            <p className="text-sm italic text-[var(--color-text)]">“{state.transcript_or_text}”</p>
+          <div className="mt-4">
+            <TranscriptViewer transcript={state.transcript_or_text} reasonCodes={state.reason_codes} />
           </div>
         )}
       </CardBody>

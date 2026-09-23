@@ -6,6 +6,8 @@ import type {
   AnalyzeRequestOut,
   AuditTrailOut,
   ContactInboxItem,
+  ContactOut,
+  ContactType,
   DashboardOut,
   DemoIdentity,
   LoginOut,
@@ -54,6 +56,12 @@ export const getHealth = () => request<{ status: string; service: string; versio
 
 // -------------------------------------------------------------- demo identities
 export const getDemoIdentities = () => request<DemoIdentity[]>("/demo/identities");
+
+// Demo-only convenience: backdates a pending verification's expiry so the
+// real background sweeper finalizes it as TIMED_OUT, exactly as it would
+// for a genuine timeout. Never fakes the outcome client-side.
+export const demoExpireVerification = (token: string, verificationId: string) =>
+  request<void>(`/demo/expire/${verificationId}`, { method: "POST", token });
 
 // -------------------------------------------------------------- analyze
 export interface AnalyzeInput {
@@ -119,6 +127,26 @@ export const submitTier3 = (token: string, verificationId: string, code: string)
 // -------------------------------------------------------------- contacts
 export const getContactInbox = (token: string, contactId: string) =>
   request<ContactInboxItem[]>(`/contacts/${contactId}/inbox`, { token });
+
+export const listTrustedContacts = (token: string, requesterId: string) =>
+  request<ContactOut[]>(`/contacts/${requesterId}`, { token });
+
+export interface TrustedContactInput {
+  requester_id: string;
+  contact_name: string;
+  relationship?: string;
+  phone_number: string;
+  contact_type: ContactType;
+}
+
+export const createTrustedContact = (token: string, body: TrustedContactInput) =>
+  request<ContactOut>("/contacts", { method: "POST", token, body: JSON.stringify(body) });
+
+export const updateTrustedContact = (token: string, contactId: string, body: Partial<TrustedContactInput>) =>
+  request<ContactOut>(`/contacts/detail/${contactId}`, { method: "PATCH", token, body: JSON.stringify(body) });
+
+export const deleteTrustedContact = (token: string, contactId: string) =>
+  request<void>(`/contacts/detail/${contactId}`, { method: "DELETE", token });
 
 // -------------------------------------------------------------- auth
 export const loginWithFirebaseToken = (idToken: string) =>

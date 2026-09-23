@@ -24,7 +24,7 @@ export function RolePicker() {
 
   function choose(identity: DemoIdentity) {
     setIdentity(identity);
-    navigate(identity.role === "requester" ? "/requester" : "/contact");
+    navigate(identity.role === "requester" ? "/home" : "/contact");
   }
 
   const requesters = identities?.filter((i) => i.role === "requester") ?? [];
@@ -66,7 +66,7 @@ export function RolePicker() {
             <div className="flex flex-col gap-3">
               {requesters.map((r) => (
                 <button key={r.id} onClick={() => choose(r)} className="text-left">
-                  <Card className="transition-colors hover:border-[var(--color-brand)]">
+                  <Card className="transition-colors hover:border-[var(--color-gold)]">
                     <CardBody>
                       <p className="font-semibold">{r.name}</p>
                       <p className="mt-1 text-xs text-[var(--color-text-muted)]">
@@ -86,7 +86,7 @@ export function RolePicker() {
             <div className="flex flex-col gap-3">
               {contacts.map((c) => (
                 <button key={c.id} onClick={() => choose(c)} className="text-left">
-                  <Card className="transition-colors hover:border-[var(--color-brand)]">
+                  <Card className="transition-colors hover:border-[var(--color-gold)]">
                     <CardBody>
                       <p className="font-semibold">{c.name}</p>
                       <p className="mt-1 text-xs text-[var(--color-text-muted)]">

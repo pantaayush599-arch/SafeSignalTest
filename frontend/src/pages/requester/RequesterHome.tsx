@@ -182,7 +182,7 @@ export function RequesterHome() {
                     aria-selected={inputMode === mode}
                     onClick={() => setInputMode(mode)}
                     className={`rounded-md px-4 py-1.5 text-sm font-medium transition-colors ${
-                      inputMode === mode ? "bg-[var(--color-primary)] text-white" : "text-[var(--color-text-muted)]"
+                      inputMode === mode ? "bg-[var(--color-gold)] text-white" : "text-[var(--color-text-muted)]"
                     }`}
                   >
                     {mode === "TEXT" ? "Text / transcript" : "Audio upload"}
@@ -201,7 +201,7 @@ export function RequesterHome() {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   rows={4}
-                  className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-brand)]"
+                  className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-gold)]"
                   placeholder="e.g. Dad, I've been arrested. Send ₹80,000 right now..."
                 />
               </div>
@@ -240,7 +240,7 @@ export function RequesterHome() {
                   id="channel"
                   value={channel}
                   onChange={(e) => setChannel(e.target.value as Channel)}
-                  className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-brand)]"
+                  className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-gold)]"
                 >
                   <option value="voice_call">Voice call</option>
                   <option value="video_call">Video call</option>
@@ -256,7 +256,7 @@ export function RequesterHome() {
                   value={claimedIdentity}
                   onChange={(e) => setClaimedIdentity(e.target.value)}
                   placeholder="e.g. son, daughter, colleague"
-                  className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-brand)]"
+                  className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-gold)]"
                 />
               </div>
               <div>
@@ -270,7 +270,7 @@ export function RequesterHome() {
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
                   placeholder="80000"
-                  className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-brand)]"
+                  className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-gold)]"
                 />
               </div>
               <div>
@@ -285,7 +285,7 @@ export function RequesterHome() {
                   step={0.01}
                   value={deepfakeScore}
                   onChange={(e) => setDeepfakeScore(Number(e.target.value))}
-                  className="w-full accent-[var(--color-brand)]"
+                  className="w-full accent-[var(--color-gold)]"
                 />
                 <p className="mt-1 text-xs text-[var(--color-text-muted)]">Optional. Advisory only — never the sole trigger.</p>
               </div>

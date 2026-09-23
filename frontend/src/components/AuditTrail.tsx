@@ -45,7 +45,7 @@ export function AuditTrail({ token, requestId, refreshKey }: { token: string; re
             <ol className="flex flex-col gap-3">
               {events.map((e, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm">
-                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-brand)]" aria-hidden="true" />
+                  <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-gold)]" aria-hidden="true" />
                   <div>
                     <span className="font-medium">{eventLabel(e.event)}</span>
                     <span className="ml-2 text-xs text-[var(--color-text-muted)]">{formatDateTime(e.timestamp)}</span>

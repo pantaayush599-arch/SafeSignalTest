@@ -63,7 +63,7 @@ export function ContactInbox() {
         <div className="flex flex-col gap-3">
           {pending.map((item) => (
             <Link key={item.verification_id} to={`/contact/verifications/${item.verification_id}`}>
-              <Card className="border-[var(--color-status-paused)]/50 transition-colors hover:border-[var(--color-brand)]">
+              <Card className="border-[var(--color-status-paused)]/50 transition-colors hover:border-[var(--color-gold)]">
                 <CardBody>
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
