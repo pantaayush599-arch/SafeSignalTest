@@ -7,6 +7,8 @@ const REASON_LABELS: Record<string, string> = {
   unusual_amount_flag: "Unusual amount",
   deepfake_signal_advisory: "Deepfake signal (advisory)",
   manual_panic_trigger: "Manually triggered (panic button)",
+  known_contact_number_mismatch: "Caller ID doesn't match trusted contact",
+  reported_scam_number: "Number reported as scam by the community",
 };
 
 export function reasonLabel(code: string): string {

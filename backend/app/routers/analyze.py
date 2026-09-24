@@ -5,11 +5,14 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_requester
 from app.audit import log as audit_log
+from app.context_checks import (
+    KNOWN_CONTACT_MISMATCH_WEIGHT, REPORTED_SCAM_NUMBER_WEIGHT, check_known_contact, check_scam_number,
+)
 from app.database import get_db
 from app.decision_gateway import gate
 from app.enums import RequestStatus, RiskLevel
 from app.models import Request, Requester, TrustedContact
-from app.risk_engine import score_transcript
+from app.risk_engine import RiskResult, level_for_score, score_transcript
 from app.schemas import AnalyzeRequestIn, AnalyzeRequestOut, ErrorOut
 from app.stt_service import decode_and_validate, transcriber, AudioUnprocessableError, STTFailedError
 from app.verification_service import start_tier1
@@ -56,6 +59,7 @@ async def analyze_request(
         input_type=body.input_type.value,
         amount=body.amount,
         deepfake_signal_score=body.deepfake_signal_score,
+        caller_phone_number=body.caller_phone_number,
         request_status=RequestStatus.PENDING.value,
         verification_required=False,
         reason_codes=[],
@@ -92,8 +96,23 @@ async def analyze_request(
 
     req.transcript_or_text = transcript
 
-    # --- Score + gate ------------------------------------------------
+    # --- Score (transcript signals + context checks) + gate -----------
     risk = score_transcript(transcript, body.deepfake_signal_score)
+    reason_codes = list(risk.reason_codes)
+    total = risk.risk_score
+
+    known_contact = check_known_contact(db, req.requester_id, body.claimed_identity, body.caller_phone_number)
+    if known_contact.checked and known_contact.matched is False:
+        reason_codes.append("known_contact_number_mismatch")
+        total += KNOWN_CONTACT_MISMATCH_WEIGHT
+
+    scam_number = check_scam_number(db, body.caller_phone_number)
+    if scam_number.reported:
+        reason_codes.append("reported_scam_number")
+        total += REPORTED_SCAM_NUMBER_WEIGHT
+
+    total = max(0, min(100, total))
+    risk = RiskResult(risk_score=total, risk_level=level_for_score(total), reason_codes=reason_codes)
     result = gate(risk)
 
     req.risk_score = risk.risk_score
@@ -102,6 +121,11 @@ async def analyze_request(
     req.decision = result.decision.value
     req.verification_required = result.verification_required
     req.request_status = result.request_status.value
+    req.known_contact_checked = known_contact.checked
+    req.known_contact_match = known_contact.matched
+    req.known_contact_name = known_contact.contact_name
+    req.reported_scam_number = scam_number.reported
+    req.scam_report_count = scam_number.report_count
     db.flush()
 
     event = {

@@ -13,6 +13,8 @@ import type {
   LoginOut,
   ManualOverrideOut,
   RequestStateOut,
+  ScamNumberLookupOut,
+  ScamReportOut,
   Tier3StartOut,
   Tier3SubmitOut,
   VerifyRespondOut,
@@ -72,6 +74,7 @@ export interface AnalyzeInput {
   claimed_identity?: string;
   amount?: number;
   deepfake_signal_score?: number;
+  caller_phone_number?: string;
   input_type: "TEXT" | "AUDIO";
   transcript_or_text?: string;
   audio?: string; // base64
@@ -159,3 +162,10 @@ export const triggerPanic = (token: string, note?: string) =>
 // -------------------------------------------------------------- family dashboard
 export const getDashboard = (token: string, requesterId: string) =>
   request<DashboardOut>(`/requesters/${requesterId}/dashboard`, { token });
+
+// -------------------------------------------------------------- crowd-reported scam numbers
+export const reportScamNumber = (token: string, body: { phone_number: string; reason?: string; request_id?: string }) =>
+  request<ScamReportOut>("/scam-reports", { method: "POST", token, body: JSON.stringify(body) });
+
+export const lookupScamNumber = (token: string, phoneNumber: string) =>
+  request<ScamNumberLookupOut>(`/scam-reports/lookup?phone_number=${encodeURIComponent(phoneNumber)}`, { token });

@@ -201,7 +201,9 @@ export function RequestDetail() {
         </Card>
       )}
 
-      {canOverride && <FraudReportCard />}
+      {canOverride && (
+        <FraudReportCard token={identity.token} requestId={state.request_id} phoneNumber={state.caller_phone_number} />
+      )}
 
       <AuditTrail token={identity.token} requestId={state.request_id} refreshKey={refreshKey} />
 

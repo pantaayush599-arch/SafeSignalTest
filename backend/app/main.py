@@ -9,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 from app.config import CORS_ORIGINS
 from app import database
 from app.database import Base
-from app.routers import analyze, verify, requests as requests_router, contacts, health, demo, auth, panic
+from app.routers import analyze, verify, requests as requests_router, contacts, health, demo, auth, panic, scam_reports
 from app.seed import seed_demo_data
 from app.verification_service import sweep_timeouts
 
@@ -33,6 +33,7 @@ app.include_router(contacts.router)
 app.include_router(demo.router)
 app.include_router(auth.router)
 app.include_router(panic.router)
+app.include_router(scam_reports.router)
 
 _sweeper_task: asyncio.Task | None = None
 

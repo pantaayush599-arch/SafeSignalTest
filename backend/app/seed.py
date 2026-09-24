@@ -7,7 +7,8 @@ but /contacts endpoints are still implemented for completeness.
 """
 from sqlalchemy.orm import Session
 
-from app.models import Requester, TrustedContact
+from app.context_checks import normalize_phone
+from app.models import Requester, ScamReport, TrustedContact
 
 
 def seed_demo_data(db: Session):
@@ -41,4 +42,26 @@ def seed_demo_data(db: Session):
     )
     db.add(primary)
     db.add(secondary)
+
+    # Seed one crowd-reported scam number (community-reports table, team
+    # scope: optional/future, added back on request) -- matches the demo
+    # mode "OTP / credential scam" scenario's caller_phone_number so it's
+    # visibly flagged in the demo, not just a silent empty table.
+    scam_number = "+911800000666"
+    db.add(ScamReport(
+        report_id="scamreport_seed1",
+        phone_number=normalize_phone(scam_number),
+        raw_phone_number=scam_number,
+        reason="Claimed to be bank support, demanded OTP under urgency/threat of account block.",
+        reporter_role="requester",
+        reporter_id="user_102",
+    ))
+    db.add(ScamReport(
+        report_id="scamreport_seed2",
+        phone_number=normalize_phone(scam_number),
+        raw_phone_number=scam_number,
+        reason="Same number, second report -- OTP phishing call.",
+        reporter_role="contact",
+        reporter_id="contact_101",
+    ))
     db.commit()

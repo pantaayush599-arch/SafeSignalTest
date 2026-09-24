@@ -101,12 +101,16 @@ def score_transcript(transcript: str, deepfake_signal_score: float | None = None
         reasons.append("deepfake_signal_advisory")
 
     total = max(0, min(100, total))
+    return RiskResult(risk_score=total, risk_level=level_for_score(total), reason_codes=reasons)
 
+
+def level_for_score(total: int) -> RiskLevel:
+    """Shared LOW/MEDIUM/HIGH banding, reused by app.routers.analyze after
+    it adds the context-check weights (known-contact mismatch, reported
+    scam number) on top of the transcript score, so both paths agree on
+    exactly the same thresholds."""
     if total <= RISK_LOW_MAX:
-        level = RiskLevel.LOW
-    elif total <= RISK_MEDIUM_MAX:
-        level = RiskLevel.MEDIUM
-    else:
-        level = RiskLevel.HIGH
-
-    return RiskResult(risk_score=total, risk_level=level, reason_codes=reasons)
+        return RiskLevel.LOW
+    if total <= RISK_MEDIUM_MAX:
+        return RiskLevel.MEDIUM
+    return RiskLevel.HIGH

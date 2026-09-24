@@ -2,6 +2,7 @@ import { Card, CardHeader, CardBody } from "./ui/Card";
 import { RiskBadge } from "./ui/Badge";
 import { RiskScale } from "./RiskScale";
 import { TranscriptViewer } from "./TranscriptViewer";
+import { CallerIdentityCheck } from "./CallerIdentityCheck";
 import type { RequestStateOut } from "../api/types";
 import { reasonLabel } from "../lib/format";
 
@@ -39,6 +40,8 @@ export function RiskAnalysisCard({ state }: { state: RequestStateOut }) {
             <TranscriptViewer transcript={state.transcript_or_text} reasonCodes={state.reason_codes} />
           </div>
         )}
+
+        <CallerIdentityCheck state={state} />
       </CardBody>
     </Card>
   );

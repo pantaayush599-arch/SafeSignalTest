@@ -46,6 +46,7 @@ export function RequesterHome() {
   const [text, setText] = useState("");
   const [channel, setChannel] = useState<Channel>("voice_call");
   const [claimedIdentity, setClaimedIdentity] = useState("");
+  const [callerPhoneNumber, setCallerPhoneNumber] = useState("");
   const [amount, setAmount] = useState("");
   const [deepfakeScore, setDeepfakeScore] = useState(0);
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -88,6 +89,7 @@ export function RequesterHome() {
     setText(s.text);
     setChannel(s.channel);
     setClaimedIdentity(s.claimed_identity);
+    setCallerPhoneNumber("");
     setAmount(s.amount);
     setAudioFile(null);
     setAudioState({ kind: "none" });
@@ -124,6 +126,7 @@ export function RequesterHome() {
         action_type: "wallet_transfer",
         channel,
         claimed_identity: claimedIdentity || undefined,
+        caller_phone_number: callerPhoneNumber.trim() || undefined,
         amount: amount ? Number(amount) : undefined,
         deepfake_signal_score: deepfakeScore > 0 ? deepfakeScore : undefined,
         input_type: inputMode,
@@ -258,6 +261,21 @@ export function RequesterHome() {
                   placeholder="e.g. son, daughter, colleague"
                   className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-gold)]"
                 />
+              </div>
+              <div>
+                <label htmlFor="caller-phone" className="mb-1.5 block text-sm font-medium">
+                  Caller phone number (optional)
+                </label>
+                <input
+                  id="caller-phone"
+                  value={callerPhoneNumber}
+                  onChange={(e) => setCallerPhoneNumber(e.target.value)}
+                  placeholder="+91 98765 00000"
+                  className="w-full rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface-raised)] px-3 py-2 text-sm outline-none focus:border-[var(--color-gold)]"
+                />
+                <p className="mt-1 text-xs text-[var(--color-text-muted)]">
+                  Checked against trusted contacts and community scam reports.
+                </p>
               </div>
               <div>
                 <label htmlFor="amount" className="mb-1.5 block text-sm font-medium">

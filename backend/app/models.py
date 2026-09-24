@@ -73,11 +73,24 @@ class Request(Base):
     transcript_or_text = Column(Text, nullable=True)
     amount = Column(Float, nullable=True)
     deepfake_signal_score = Column(Float, nullable=True)
+    # Optional caller number (team scope: known-contact check + crowd
+    # scam-number database). Additive field -- absent it, both context
+    # checks below simply don't run; nothing else in the frozen contract
+    # changes.
+    caller_phone_number = Column(String, nullable=True)
 
     risk_score = Column(Integer, nullable=True)
     risk_level = Column(String, nullable=True)
     decision = Column(String, nullable=True)
     reason_codes = Column(JSON, nullable=True, default=list)
+    # Context checks (app.context_checks), recorded at analysis time so the
+    # audit record reflects what was true THEN, not whatever the trusted
+    # contact list / scam registry happens to say now.
+    known_contact_checked = Column(Boolean, nullable=False, default=False)
+    known_contact_match = Column(Boolean, nullable=True)
+    known_contact_name = Column(String, nullable=True)
+    reported_scam_number = Column(Boolean, nullable=False, default=False)
+    scam_report_count = Column(Integer, nullable=False, default=0)
     triggered_by_panic = Column(Boolean, nullable=False, default=False)
     verification_required = Column(Boolean, nullable=False, default=False)
     request_status = Column(String, nullable=False, default="PENDING")
@@ -117,6 +130,25 @@ class Verification(Base):
     expires_at = Column(DateTime, nullable=False)
 
     request = relationship("Request", back_populates="verifications")
+
+
+class ScamReport(Base):
+    """Crowd-reported scam number database (team scope: optional/future,
+    now requested). Self-contained community-reports table -- anyone
+    authenticated (requester or trusted contact) can report a number; a
+    report count above zero for a normalized number is treated as a real
+    risk signal in app.context_checks.check_scam_number, on top of (never
+    instead of) the transcript-based risk engine."""
+    __tablename__ = "scam_reports"
+
+    report_id = Column(String, primary_key=True)
+    phone_number = Column(String, nullable=False, index=True)  # normalized (see context_checks.normalize_phone)
+    raw_phone_number = Column(String, nullable=False)  # as submitted, for display
+    reason = Column(Text, nullable=True)
+    reporter_role = Column(String, nullable=False)  # "requester" | "contact"
+    reporter_id = Column(String, nullable=False)
+    request_id = Column(String, ForeignKey("requests.request_id"), nullable=True)
+    created_at = Column(DateTime, default=now_utc)
 
 
 class AuditEvent(Base):

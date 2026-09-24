@@ -21,6 +21,7 @@ class AnalyzeRequestIn(BaseModel):
     claimed_identity: Optional[str] = None
     amount: Optional[float] = None
     deepfake_signal_score: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    caller_phone_number: Optional[str] = None
     timestamp: Optional[datetime] = None
 
     @model_validator(mode="after")
@@ -136,6 +137,12 @@ class RequestStateOut(BaseModel):
     amount: Optional[float] = None
     claimed_identity: Optional[str] = None
     channel: Optional[str] = None
+    caller_phone_number: Optional[str] = None
+    known_contact_checked: bool = False
+    known_contact_match: Optional[bool] = None
+    known_contact_name: Optional[str] = None
+    reported_scam_number: bool = False
+    scam_report_count: int = 0
     verification_required: bool = False
     request_status: RequestStatus
     current_tier: Optional[int] = None
@@ -212,6 +219,26 @@ class ContactOut(BaseModel):
     phone_number: str
     contact_type: ContactType
     auth_token: Optional[str] = None  # only returned at creation, for demo login
+
+
+# ---------------------------------------------------------------- scam reports (crowd-reported number db)
+class ScamReportIn(BaseModel):
+    phone_number: str = Field(min_length=1)
+    reason: Optional[str] = None
+    request_id: Optional[str] = None  # optional link to the request that prompted this report
+
+
+class ScamReportOut(BaseModel):
+    report_id: str
+    phone_number: str
+    reason: Optional[str] = None
+    created_at: datetime
+
+
+class ScamNumberLookupOut(BaseModel):
+    phone_number: str
+    reported: bool
+    report_count: int
 
 
 # ---------------------------------------------------------------- error

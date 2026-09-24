@@ -45,6 +45,12 @@ export interface RequestStateOut {
   amount?: number | null;
   claimed_identity?: string | null;
   channel?: string | null;
+  caller_phone_number?: string | null;
+  known_contact_checked: boolean;
+  known_contact_match?: boolean | null;
+  known_contact_name?: string | null;
+  reported_scam_number: boolean;
+  scam_report_count: number;
   verification_required: boolean;
   request_status: RequestStatus;
   current_tier?: number | null;
@@ -162,6 +168,19 @@ export interface DashboardOut {
   requester_id: string;
   requester_name: string;
   entries: DashboardEntry[];
+}
+
+export interface ScamReportOut {
+  report_id: string;
+  phone_number: string;
+  reason?: string | null;
+  created_at: string;
+}
+
+export interface ScamNumberLookupOut {
+  phone_number: string;
+  reported: boolean;
+  report_count: number;
 }
 
 export interface ApiErrorBody {

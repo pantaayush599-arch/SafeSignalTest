@@ -19,6 +19,7 @@ interface Scenario {
   channel: "voice_call" | "video_call" | "text";
   action_type: string;
   claimed_identity: string;
+  caller_phone_number?: string;
   amount?: number;
   transcript: string;
 }
@@ -28,6 +29,10 @@ interface Scenario {
 // shown afterward come entirely from the backend's actual response, never
 // fabricated here. B and C intentionally carry no `amount` so the resulting
 // screen must NOT show a transfer figure that was never in the transcript.
+// B's caller_phone_number matches the seeded crowd-reported scam number,
+// and C's claims to be "Uncle" (a real trusted contact) from a DIFFERENT
+// number than his registered one -- both demonstrate real, backend-computed
+// context checks, not scripted UI states.
 const SCENARIOS: Scenario[] = [
   {
     id: "financial-emergency",
@@ -45,23 +50,25 @@ const SCENARIOS: Scenario[] = [
     id: "otp-scam",
     icon: KeyRound,
     title: "B. OTP / credential scam",
-    tagline: "A claimed bank caller pressuring for a one-time code — no money mentioned.",
-    note: "Expect: HIGH risk, an OTP/credential summary — never a fabricated transfer amount.",
+    tagline: "A claimed bank caller, from a number the community has already reported — no money mentioned.",
+    note: "Expect: HIGH risk, a community scam-report flag, an OTP/credential summary — never a fabricated transfer amount.",
     channel: "voice_call",
     action_type: "otp_share",
     claimed_identity: "bank support executive",
+    caller_phone_number: "+911800000666",
     transcript: "Your account will be blocked in 5 minutes. Give me the OTP immediately, share the code now, it's urgent.",
   },
   {
     id: "family-impersonation",
     icon: HeartHandshake,
     title: "C. Family impersonation, no money",
-    tagline: "A claimed relative asking to keep something secret — no transfer, no OTP.",
-    note: "Expect: elevated risk from urgency/secrecy signals alone, no amount or OTP shown.",
+    tagline: "A caller claiming to be a real trusted contact, from an unrecognized number — no transfer, no OTP.",
+    note: "Expect: elevated risk from a known-contact number mismatch plus urgency/secrecy — no amount or OTP shown.",
     channel: "video_call",
     action_type: "other",
-    claimed_identity: "daughter",
-    transcript: "Mom, I'm stuck somewhere and it's urgent, please don't tell dad yet, just keep this between us for now.",
+    claimed_identity: "Uncle",
+    caller_phone_number: "+919555512345",
+    transcript: "It's Uncle Rohan. I'm stuck somewhere and it's urgent, please don't tell your dad yet, just keep this between us for now.",
   },
 ];
 
@@ -93,6 +100,7 @@ export function DemoMode() {
         action_type: scenario.action_type,
         channel: scenario.channel,
         claimed_identity: scenario.claimed_identity,
+        caller_phone_number: scenario.caller_phone_number,
         amount: scenario.amount,
         input_type: "TEXT",
         transcript_or_text: scenario.transcript,
